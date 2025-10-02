@@ -5,28 +5,30 @@ using UnityEngine;
 using DG.Tweening;
 
 [Serializable]
-public class Item
+public abstract class Item
 {
     public Cell Cell { get; private set; }
 
-    public Transform View { get; private set; }
+    public Transform View { get; protected set; }
 
+    protected eNormalType normalType = eNormalType.NONE;
+    protected eBonusType bonusType = eBonusType.NONE;
 
-    public virtual void SetView()
+    public void SetView()
     {
-        string prefabname = GetPrefabName();
+        GameObject prefab;
 
-        if (!string.IsNullOrEmpty(prefabname))
+        if (normalType != eNormalType.NONE)
         {
-            GameObject prefab = Resources.Load<GameObject>(prefabname);
-            if (prefab)
-            {
-                View = GameObject.Instantiate(prefab).transform;
-            }
+            prefab = ItemManager.Instance.GetItem(normalType);
         }
-    }
+        else
+        {
+            prefab = ItemManager.Instance.GetItem(bonusType);
+        }
 
-    protected virtual string GetPrefabName() { return string.Empty; }
+        View = GameObject.Instantiate(prefab).transform;
+    }
 
     public virtual void SetCell(Cell cell)
     {

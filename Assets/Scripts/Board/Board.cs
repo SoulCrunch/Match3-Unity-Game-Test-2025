@@ -81,7 +81,7 @@ public class Board
                 Cell cell = m_cells[x, y];
                 NormalItem item = new NormalItem();
 
-                List<NormalItem.eNormalType> types = new List<NormalItem.eNormalType>();
+                List<eNormalType> types = new List<eNormalType>();
                 if (cell.NeighbourBottom != null)
                 {
                     NormalItem nitem = cell.NeighbourBottom.Item as NormalItem;
@@ -264,13 +264,13 @@ public class Board
         switch (dir)
         {
             case eMatchDirection.ALL:
-                item.SetType(BonusItem.eBonusType.ALL);
+                item.SetType(eBonusType.ALL);
                 break;
             case eMatchDirection.HORIZONTAL:
-                item.SetType(BonusItem.eBonusType.HORIZONTAL);
+                item.SetType(eBonusType.HORIZONTAL);
                 break;
             case eMatchDirection.VERTICAL:
-                item.SetType(BonusItem.eBonusType.VERTICAL);
+                item.SetType(eBonusType.VERTICAL);
                 break;
         }
 
@@ -362,7 +362,7 @@ public class Board
                 foreach (var cell in matches)
                 {
                     BonusItem item = cell.Item as BonusItem;
-                    if (item == null || item.ItemType == BonusItem.eBonusType.HORIZONTAL)
+                    if (item == null || item.ItemType == eBonusType.HORIZONTAL)
                     {
                         result.Add(cell);
                     }
@@ -372,7 +372,7 @@ public class Board
                 foreach (var cell in matches)
                 {
                     BonusItem item = cell.Item as BonusItem;
-                    if (item == null || item.ItemType == BonusItem.eBonusType.VERTICAL)
+                    if (item == null || item.ItemType == eBonusType.VERTICAL)
                     {
                         result.Add(cell);
                     }
@@ -382,7 +382,7 @@ public class Board
                 foreach (var cell in matches)
                 {
                     BonusItem item = cell.Item as BonusItem;
-                    if (item == null || item.ItemType == BonusItem.eBonusType.ALL)
+                    if (item == null || item.ItemType == eBonusType.ALL)
                     {
                         result.Add(cell);
                     }
