@@ -2,26 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 [CreateAssetMenu(fileName = "ItemDatabase", menuName = "Database/Item Database")]
 public class ItemDatabase : ScriptableObject
 {
-    [Serializable]
-    private class Item_N
-    {
-        public eNormalType type;
-        public GameObject prefab;
-    }
-
-    [Serializable]
-    private class Item_S
-    {
-        public eBonusType type;
-        public GameObject prefab;
-    }
-
-    [SerializeField] private List<Item_N> allNormalItemPrefabs = new List<Item_N>();
-    [SerializeField] private List<Item_S> allBonusItemPrefabs = new List<Item_S>();
+    [SerializeField] private List<GameObject> allItemPrefabs = new List<GameObject>();
 
     private Dictionary<eNormalType, GameObject> normalDict;
     private Dictionary<eBonusType, GameObject> bonusDict;
@@ -31,24 +15,24 @@ public class ItemDatabase : ScriptableObject
         normalDict = new Dictionary<eNormalType, GameObject>();
         bonusDict = new Dictionary<eBonusType, GameObject>();
 
-        foreach (var n in allNormalItemPrefabs)
+        foreach (var prefab in allItemPrefabs)
         {
-            if (n.prefab == null)
+            var itemType = prefab.GetComponent<ItemWithType>();
+            if (itemType == null)
             {
-                Debug.LogError($"Missing prefab for normal type: {n.type}");
+                Debug.LogError($"[ItemDatabase] Prefab {prefab.name} is missing ItemWithType component!");
+                continue;
             }
 
-            normalDict[n.type] = n.prefab;
-        }
-
-        foreach (var b in allBonusItemPrefabs)
-        {
-            if (b.prefab == null)
+            if (itemType.NormalType != eNormalType.NONE)
             {
-                Debug.LogError($"Missing prefab for normal type: {b.type}");
+                normalDict[itemType.NormalType] = prefab;
             }
 
-            bonusDict[b.type] = b.prefab;
+            if (itemType.BonusType != eBonusType.NONE)
+            {
+                bonusDict[itemType.BonusType] = prefab;
+            }
         }
     }
 
@@ -62,5 +46,3 @@ public class ItemDatabase : ScriptableObject
         return bonusDict.TryGetValue(type, out var prefab) ? prefab : null;
     }
 }
-
-

@@ -16,18 +16,20 @@ public abstract class Item
 
     public void SetView()
     {
-        GameObject prefab;
+        //GameObject prefab;
 
         if (normalType != eNormalType.NONE)
         {
-            prefab = ItemManager.Instance.GetItem(normalType);
+            View = ItemManager.Instance.GetItem(normalType).transform;
         }
         else
         {
-            prefab = ItemManager.Instance.GetItem(bonusType);
+            View = ItemManager.Instance.GetItem(bonusType).transform;
         }
 
-        View = GameObject.Instantiate(prefab).transform;
+        //View = GameObject.Instantiate(prefab).transform;
+
+        View.localScale = Vector3.one;
     }
 
     public virtual void SetCell(Cell cell)
@@ -103,14 +105,13 @@ public abstract class Item
             View.DOScale(0.1f, 0.1f).OnComplete(
                 () =>
                 {
-                    GameObject.Destroy(View.gameObject);
+                    //GameObject.Destroy(View.gameObject);
+                    ItemManager.Instance.ReturnItem(View.gameObject);
                     View = null;
                 }
                 );
         }
     }
-
-
 
     internal void AnimateForHint()
     {
@@ -134,7 +135,8 @@ public abstract class Item
 
         if (View)
         {
-            GameObject.Destroy(View.gameObject);
+            //GameObject.Destroy(View.gameObject);
+            ItemManager.Instance.ReturnItem(View.gameObject);
             View = null;
         }
     }
