@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static GameManager;
 
 public class GameManager : MonoBehaviour
 {
@@ -45,6 +46,8 @@ public class GameManager : MonoBehaviour
 
     private LevelCondition m_levelCondition;
 
+    private eLevelMode m_levelMode;
+
     private void Awake()
     {
         State = eStateGame.SETUP;
@@ -83,6 +86,8 @@ public class GameManager : MonoBehaviour
 
     public void LoadLevel(eLevelMode mode)
     {
+        m_levelMode = mode;
+
         m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
 
         ItemManager.Instance.Init(m_boardController.transform);
@@ -103,6 +108,12 @@ public class GameManager : MonoBehaviour
         m_levelCondition.ConditionCompleteEvent += GameOver;
 
         State = eStateGame.GAME_STARTED;
+    }
+
+    public void ResetLevel()
+    {
+        ClearLevel();
+        LoadLevel(m_levelMode);
     }
 
     public void GameOver()
