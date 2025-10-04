@@ -41,7 +41,7 @@ public class Board
 
     private void CreateBoard()
     {
-        Vector3 origin = new Vector3(-boardSizeX * 0.5f + 0.5f, -boardSizeY * 0.5f + 0.5f, 0f);
+        Vector3 origin = GetOrigin();
         GameObject prefabBG = Resources.Load<GameObject>(Constants.PREFAB_CELL_BACKGROUND);
         for (int x = 0; x < boardSizeX; x++)
         {
@@ -70,6 +70,17 @@ public class Board
             }
         }
 
+    }
+
+    public Vector3 GetOrigin()
+    {
+        Vector3 origin = new Vector3(-boardSizeX * 0.5f + 0.5f, -boardSizeY * 0.5f + 0.5f, 0f);
+        return origin;
+    }
+
+    public Cell[,] GetCellArray()
+    {
+        return m_cells;
     }
 
     internal void Fill()

@@ -19,7 +19,9 @@ public class BoardController : MonoBehaviour
 
     private Camera m_cam;
 
-    private Collider2D m_hitCollider;
+    //private Collider2D m_hitCollider;
+
+    private Cell cellInit;
 
     private GameSettings m_gameSettings;
 
@@ -30,6 +32,10 @@ public class BoardController : MonoBehaviour
     private bool m_hintIsShown;
 
     private bool m_gameOver;
+
+    private Vector2 origin;
+
+    private Cell[,] cellArray;
 
     public void StartGame(GameManager gameManager, GameSettings gameSettings)
     {
@@ -42,6 +48,10 @@ public class BoardController : MonoBehaviour
         m_cam = Camera.main;
 
         m_board = new Board(this.transform, gameSettings);
+
+        origin = m_board.GetOrigin();
+
+        cellArray = m_board.GetCellArray();
 
         Fill();
     }
@@ -69,7 +79,6 @@ public class BoardController : MonoBehaviour
         }
     }
 
-
     public void Update()
     {
         if (m_gameOver) return;
@@ -87,11 +96,11 @@ public class BoardController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            var hit = Physics2D.Raycast(m_cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            if (hit.collider != null)
+            cellInit = GetTouchedCell();
+
+            if (cellInit != null)
             {
                 m_isDragging = true;
-                m_hitCollider = hit.collider;
             }
         }
 
@@ -102,22 +111,23 @@ public class BoardController : MonoBehaviour
 
         if (Input.GetMouseButton(0) && m_isDragging)
         {
-            var hit = Physics2D.Raycast(m_cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            if (hit.collider != null)
+            Cell cellSecond = GetTouchedCell();
+
+            if (cellSecond != null)
             {
-                if (m_hitCollider != null && m_hitCollider != hit.collider)
+                if (cellInit != null && cellInit != cellSecond)
                 {
                     StopHints();
 
-                    Cell c1 = m_hitCollider.GetComponent<Cell>();
-                    Cell c2 = hit.collider.GetComponent<Cell>();
-                    if (AreItemsNeighbor(c1, c2))
+                    Cell cellFirst = cellInit;
+
+                    if (AreItemsNeighbor(cellFirst, cellSecond))
                     {
                         IsBusy = true;
-                        SetSortingLayer(c1, c2);
-                        m_board.Swap(c1, c2, () =>
+                        SetSortingLayer(cellFirst, cellSecond);
+                        m_board.Swap(cellFirst, cellSecond, () =>
                         {
-                            FindMatchesAndCollapse(c1, c2);
+                            FindMatchesAndCollapse(cellFirst, cellSecond);
                         });
 
                         ResetRayCast();
@@ -131,10 +141,27 @@ public class BoardController : MonoBehaviour
         }
     }
 
+    private Cell GetTouchedCell()
+    {
+        Vector2 clickPoint = m_cam.ScreenToWorldPoint(Input.mousePosition);
+
+        Vector2 actualCell = clickPoint - origin;
+        actualCell = new Vector2 (Mathf.Round(actualCell.x), Mathf.Round(actualCell.y));
+
+        int cellX = (int)actualCell.x;
+        int cellY = (int)actualCell.y;
+
+        if (cellX <= m_gameSettings.BoardSizeX && cellY <= m_gameSettings.BoardSizeY)
+        {
+            return cellArray[cellX, cellY];
+        }
+        else return null;
+    }
+
     private void ResetRayCast()
     {
         m_isDragging = false;
-        m_hitCollider = null;
+        cellInit = null;
     }
 
     private void FindMatchesAndCollapse(Cell cell1, Cell cell2)
