@@ -144,4 +144,9 @@ public abstract class Item
             View = null;
         }
     }
+
+    public eNormalType GetNormalType()
+    {
+        return normalType;
+    }
 }

@@ -158,7 +158,7 @@ public class Board
 
                 NormalItem item = new NormalItem();
 
-                item.SetType(Utils.GetRandomNormalType());
+                item.SetType(GetItemTypeNotTheSameAsNeighboursAndLeastOnBoard(cell));
                 item.SetView();
                 item.SetViewRoot(m_root);
 
@@ -166,6 +166,73 @@ public class Board
                 cell.ApplyItemPosition(true);
             }
         }
+    }
+
+    private eNormalType GetItemTypeNotTheSameAsNeighboursAndLeastOnBoard(Cell cell)
+    {
+        eNormalType type1 = eNormalType.NONE;
+        eNormalType type2 = eNormalType.NONE;
+        eNormalType type3 = eNormalType.NONE;
+        eNormalType type4 = eNormalType.NONE;
+
+        if (cell.NeighbourUp != null && cell.NeighbourUp.Item != null)
+        {
+            type1 = cell.NeighbourUp.Item.GetNormalType();
+        }
+        if (cell.NeighbourBottom != null && cell.NeighbourBottom.Item != null)
+        {
+            type2 = cell.NeighbourBottom.Item.GetNormalType();
+        }
+        if (cell.NeighbourLeft != null && cell.NeighbourLeft.Item != null)
+        {
+            type3 = cell.NeighbourLeft.Item.GetNormalType();
+        }
+        if (cell.NeighbourRight != null && cell.NeighbourRight.Item != null)
+        {
+            type4 = cell.NeighbourRight.Item.GetNormalType();
+        }
+
+        eNormalType[] existingTypes = { type1, type2, type3, type4 };
+
+        eNormalType chosenType = eNormalType.NONE;
+
+        var gemCounts = CountAmountOfGemsPerType();
+        var sorted = gemCounts.OrderBy(kv => kv.Value);
+
+        foreach (var kv in sorted)
+        {
+            bool isNeighbour = existingTypes.Contains(kv.Key);
+
+            if (!isNeighbour)
+            {
+                chosenType = kv.Key;
+                break;
+            }
+        }
+
+        return chosenType;
+    }
+
+    private Dictionary<eNormalType, int> CountAmountOfGemsPerType()
+    {
+        var counts = new Dictionary<eNormalType, int>();
+
+        foreach (eNormalType type in Enum.GetValues(typeof(eNormalType)))
+        {
+            if (type == eNormalType.NONE) continue;
+            counts[type] = 0;
+        }
+
+        foreach (var cell in m_cells)
+        {
+            if(cell != null && cell.Item != null)
+            {
+                eNormalType type = cell.Item.GetNormalType();
+                counts[type]++;
+            }
+        }
+
+        return counts;
     }
 
     internal void ExplodeAllItems()
