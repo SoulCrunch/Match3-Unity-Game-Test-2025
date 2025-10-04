@@ -10,7 +10,7 @@ public class ItemDatabase : ScriptableObject
     private Dictionary<eNormalType, GameObject> normalDict;
     private Dictionary<eBonusType, GameObject> bonusDict;
 
-    public void Init()
+    public void OnEnable()
     {
         normalDict = new Dictionary<eNormalType, GameObject>();
         bonusDict = new Dictionary<eBonusType, GameObject>();

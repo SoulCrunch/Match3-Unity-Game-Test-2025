@@ -275,6 +275,7 @@ public class Board
         switch (dir)
         {
             case eMatchDirection.ALL:
+            case eMatchDirection.NONE:
                 item.SetType(eBonusType.ALL);
                 break;
             case eMatchDirection.HORIZONTAL:

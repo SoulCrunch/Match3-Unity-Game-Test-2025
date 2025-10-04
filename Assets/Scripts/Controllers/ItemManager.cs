@@ -20,7 +20,7 @@ public class ItemManager : MonoBehaviour
         }
         Instance = this;
 
-        itemDatabase.Init();
+        //itemDatabase.Init();
 
         normalPools = new Dictionary<eNormalType, ObjectPool>();
         bonusPools = new Dictionary<eBonusType, ObjectPool>();

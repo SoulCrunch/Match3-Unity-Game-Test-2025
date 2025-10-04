@@ -22,14 +22,18 @@ public abstract class Item
         {
             View = ItemManager.Instance.GetItem(normalType).transform;
         }
-        else
+        else if(bonusType != eBonusType.NONE)
         {
             View = ItemManager.Instance.GetItem(bonusType).transform;
         }
+        else
+        {
+            return;
+        }
 
-        //View = GameObject.Instantiate(prefab).transform;
+            //View = GameObject.Instantiate(prefab).transform;
 
-        View.localScale = Vector3.one;
+            View.localScale = Vector3.one;
     }
 
     public virtual void SetCell(Cell cell)
